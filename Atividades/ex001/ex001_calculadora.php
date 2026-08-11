@@ -30,6 +30,5 @@ switch ($op)
 </head>
 <body>
     <?php echo "<h1>Resultado: $result</h1>"; ?>
-    
 </body>
 </html>
