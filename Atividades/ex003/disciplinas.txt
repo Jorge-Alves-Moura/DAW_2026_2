@@ -1,0 +1,4 @@
+nome;sigla;carga
+Matematica basica;1MAB;4
+Fundamentos de Algoritimos Computacionais;1FAC;4
+Cálculo;2CAL;4
