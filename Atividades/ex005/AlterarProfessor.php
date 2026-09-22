@@ -1,4 +1,6 @@
 <?php
+
+$msg = "";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') 
 {
     $matricula = $_POST["matricula"];
@@ -18,13 +20,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
         }
 
         $dados = explode(";", $linha);
-        fwrite($arqNovo);
+        fwrite($arqNovo, $linha);
     }
 
     fclose($arqProfessores);
     fclose($arqNovo);
 
     rename("Professores_novo.txt", "Professores.txt");
+    $msg = "Alteraçao bem sucedida";
 }
 ?>
 
@@ -39,9 +42,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 
 <body>
     <form action="Alterar.php" method="post">
-        <input type="text" name="nome" placeholder="Alterar nome:">
-        <input type="text" name="email" placeholder="Alterar email:">
+        <input type="text" name="nome" placeholder="Alterar nome:"><br>
+        <input type="text" name="email" placeholder="Alterar email:"><br>
+        <input type="submit">
     </form>
+
+    <p>
+    <?php
+    echo($msg);
+    ?>
+    </p>
+
 </body>
 
 </html>
