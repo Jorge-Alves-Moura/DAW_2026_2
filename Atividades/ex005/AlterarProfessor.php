@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 </head>
 
 <body>
-    <form action="Alterar.php" method="post">
+    <form action="AlterarProfessor.php" method="post">
         <input type="text" name="nome" placeholder="Alterar nome:"><br>
         <input type="text" name="email" placeholder="Alterar email:"><br>
         <input type="submit">
