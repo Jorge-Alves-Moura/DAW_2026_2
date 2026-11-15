@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questão</title>
+    <script>
+        function Exibir() {
+            let params = new URLSearchParams(window.location.search);
+            let idPergunta = params.get("idPergunta");
+            let tipo = params.get("tipo");
+
+            let xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log("Resposta chegou ok: " + this.responseText);
+                    document.getElementById("corpoQuestao").innerHTML = this.responseText;
+                } else if (this.readyState < 4) {
+                    console.log("Carregando: " + this.readyState);
+                } else {
+                    console.log("Requisição falhou: " + this.status);
+                }
+            };
+
+            xmlhttp.open(
+                "GET",
+                "ExibirQuestao.php?idPergunta=" + encodeURIComponent(idPergunta) +
+                "&tipo=" + encodeURIComponent(tipo),
+                true
+            );
+            xmlhttp.send();
+            console.log("Enviei requisição");
+        }
+    </script>
+</head>
+
+<body onload="Exibir()">
+    <h1>Questão</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Pergunta</th>
+                <th>Resposta</th>
+            </tr>
+        </thead>
+        <tbody id="corpoQuestao"></tbody>
+    </table>
+    <br>
+    <a href="ListarQuestoes.html">Voltar para Lista</a>
+</body>
+
+</html>

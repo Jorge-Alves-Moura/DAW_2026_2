@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excluir Usuário</title>
+    <script>
+        function ExcluirUsuario() {
+            let matricula = document.getElementById("matricula").value;
+            document.getElementById("resultado").innerHTML = "Excluindo...";
+
+            let xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log("Resposta chegou ok: " + this.responseText);
+                    document.getElementById("resultado").innerHTML =
+                        "Resultado: " + this.responseText;
+                    document.getElementById("formExcluir").reset();
+                } else if (this.readyState < 4) {
+                    console.log("Carregando: " + this.readyState);
+                } else {
+                    console.log("Requisição falhou: " + this.status);
+                }
+            };
+
+            xmlhttp.open(
+                "GET",
+                "ExcluirUsuario.php?matricula=" + encodeURIComponent(matricula),
+                true
+            );
+            xmlhttp.send();
+            console.log("Enviei exclusão");
+        }
+    </script>
+</head>
+
+<body>
+    <form action="" method="get" name="formExcluir" id="formExcluir">
+        <input type="text" name="matricula" id="matricula" placeholder="Matrícula:"><br>
+        <input type="button" value="Excluir" onclick="ExcluirUsuario()">
+    </form>
+    <h3 id="resultado">Resultado:</h3>
+    <a href="ListarUsuarios.html">Voltar para Lista</a>
+</body>
+
+</html>

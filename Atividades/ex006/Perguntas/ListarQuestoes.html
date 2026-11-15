@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Perguntas</title>
+    <script>
+        function Listar() {
+            let xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log("Resposta chegou ok: " + this.responseText);
+                    document.getElementById("corpoTabela").innerHTML = this.responseText;
+                } else if (this.readyState < 4) {
+                    console.log("Carregando: " + this.readyState);
+                } else {
+                    console.log("Requisição falhou: " + this.status);
+                }
+            };
+
+            xmlhttp.open("GET", "ListarQuestoes.php", true);
+            xmlhttp.send();
+            console.log("Solicitei lista");
+        }
+
+        function ExcluirDaLista(idPergunta, tipo) {
+            let xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log("Resposta chegou ok: " + this.responseText);
+                    document.getElementById("resultado").innerHTML =
+                        "Resultado: " + this.responseText;
+                    Listar();
+                } else if (this.readyState < 4) {
+                    console.log("Carregando: " + this.readyState);
+                } else {
+                    console.log("Requisição falhou: " + this.status);
+                }
+            };
+
+            xmlhttp.open("POST", "ExcluirQuestao.php", true);
+            xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xmlhttp.send(
+                "idPergunta=" + encodeURIComponent(idPergunta) +
+                "&tipo=" + encodeURIComponent(tipo)
+            );
+        }
+    </script>
+</head>
+
+<body onload="Listar()">
+    <h1>Lista de Perguntas</h1>
+    <p>
+        <a href="IncluirQuestao-Discursiva.html"><button>Nova Discursiva</button></a>
+        <a href="IncluirQuestao-MultiplaEscolha.html"><button>Nova Múltipla Escolha</button></a>
+        <a href="ExcluirQuestao.html"><button>Excluir por ID</button></a>
+    </p>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Tipo</th>
+                <th>ID</th>
+                <th>Pergunta</th>
+                <th>Resposta</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="corpoTabela"></tbody>
+    </table>
+    <h3 id="resultado">Resultado:</h3>
+</body>
+
+</html>
