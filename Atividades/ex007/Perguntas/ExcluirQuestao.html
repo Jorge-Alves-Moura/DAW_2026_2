@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excluir Pergunta</title>
+    <script>
+        function Excluir() {
+            let idPergunta = document.getElementById("idPergunta").value;
+            let tipo = document.getElementById("tipo").value;
+
+            document.getElementById("resultado").innerHTML = "Excluindo...";
+
+            let xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log("Resposta chegou ok: " + this.responseText);
+                    document.getElementById("resultado").innerHTML =
+                        "Resultado: " + this.responseText;
+                    document.getElementById("formExcluir").reset();
+                } else if (this.readyState < 4) {
+                    console.log("Carregando: " + this.readyState);
+                } else {
+                    console.log("Requisição falhou: " + this.status);
+                }
+            };
+
+            xmlhttp.open("POST", "ExcluirQuestao.php", true);
+            xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xmlhttp.send(
+                "idPergunta=" + encodeURIComponent(idPergunta) +
+                "&tipo=" + encodeURIComponent(tipo)
+            );
+            console.log("Enviei formulário");
+        }
+    </script>
+</head>
+
+<body>
+    <form action="" method="post" name="formExcluir" id="formExcluir">
+        <input type="number" name="idPergunta" id="idPergunta" placeholder="ID da pergunta"><br>
+        <select name="tipo" id="tipo">
+            <option value="multipla">Múltipla escolha</option>
+            <option value="discursiva">Discursiva</option>
+        </select><br>
+        <input type="button" value="Excluir" onclick="Excluir()">
+    </form>
+    <h3 id="resultado">Resultado:</h3>
+    <a href="ListarQuestoes.html">Voltar para Lista</a>
+</body>
+
+</html>

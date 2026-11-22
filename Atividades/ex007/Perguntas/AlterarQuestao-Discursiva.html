@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alterar Pergunta Discursiva</title>
+    <script>
+        function BuscarDiscursiva() {
+            let idPergunta = document.getElementById("buscaId").value;
+
+            let xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log("Resposta chegou ok: " + this.responseText);
+                    let dados = JSON.parse(this.responseText);
+                    if (dados.encontrada) {
+                        document.getElementById("idPergunta").value = dados.idPergunta;
+                        document.getElementById("pergunta").value = dados.pergunta;
+                        document.getElementById("resposta").value = dados.resposta;
+                        document.getElementById("formAlterar").style.display = "block";
+                        document.getElementById("resultado").innerHTML = "Resultado:";
+                    } else {
+                        document.getElementById("formAlterar").style.display = "none";
+                        document.getElementById("resultado").innerHTML = "Resultado: Pergunta não encontrada.";
+                    }
+                } else if (this.readyState < 4) {
+                    console.log("Carregando: " + this.readyState);
+                } else {
+                    console.log("Requisição falhou: " + this.status);
+                }
+            };
+
+            xmlhttp.open(
+                "GET",
+                "AlterarQuestao-Discursiva.php?idPergunta=" + encodeURIComponent(idPergunta),
+                true
+            );
+            xmlhttp.send();
+        }
+
+        function AlterarDiscursiva() {
+            let idPergunta = document.getElementById("idPergunta").value;
+            let pergunta = document.getElementById("pergunta").value;
+            let resposta = document.getElementById("resposta").value;
+
+            let xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log("Resposta chegou ok: " + this.responseText);
+                    document.getElementById("resultado").innerHTML =
+                        "Resultado: " + this.responseText;
+                } else if (this.readyState < 4) {
+                    console.log("Carregando: " + this.readyState);
+                } else {
+                    console.log("Requisição falhou: " + this.status);
+                }
+            };
+
+            xmlhttp.open("POST", "AlterarQuestao-Discursiva.php", true);
+            xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xmlhttp.send(
+                "idPergunta=" + encodeURIComponent(idPergunta) +
+                "&pergunta=" + encodeURIComponent(pergunta) +
+                "&resposta=" + encodeURIComponent(resposta)
+            );
+            console.log("Enviei alteração");
+        }
+
+        function VerificarParametroUrl() {
+            let params = new URLSearchParams(window.location.search);
+            if (params.has("idPergunta")) {
+                document.getElementById("buscaId").value = params.get("idPergunta");
+                BuscarDiscursiva();
+            }
+        }
+    </script>
+</head>
+
+<body onload="VerificarParametroUrl()">
+    <form action="" method="get" id="formBuscar">
+        <input type="number" name="idPergunta" id="buscaId" placeholder="ID da pergunta">
+        <input type="button" value="Buscar" onclick="BuscarDiscursiva()">
+    </form>
+
+    <form action="" method="post" id="formAlterar" style="display: none; margin-top: 15px;">
+        <input type="hidden" name="idPergunta" id="idPergunta">
+        <input type="text" name="pergunta" id="pergunta"><br>
+        <input type="text" name="resposta" id="resposta"><br>
+        <input type="button" value="Alterar" onclick="AlterarDiscursiva()">
+    </form>
+
+    <h3 id="resultado">Resultado:</h3>
+    <a href="ListarQuestoes.html">Voltar para Lista</a>
+</body>
+
+</html>

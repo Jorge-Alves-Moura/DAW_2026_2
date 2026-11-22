@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incluir Questão Discursiva</title>
+    <script>
+        function IncluirDiscursiva() {
+            let pergunta = document.getElementById("pergunta").value;
+            let resposta = document.getElementById("resposta").value;
+
+            document.getElementById("resultado").innerHTML = "Enviando...";
+
+            let xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log("Resposta chegou ok: " + this.responseText);
+                    document.getElementById("resultado").innerHTML =
+                        "Resultado: " + this.responseText;
+                    document.getElementById("formDiscursiva").reset();
+                } else if (this.readyState < 4) {
+                    console.log("Carregando: " + this.readyState);
+                } else {
+                    console.log("Requisição falhou: " + this.status);
+                }
+            };
+
+            xmlhttp.open("POST", "IncluirQuestao-Discursiva.php", true);
+            xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xmlhttp.send(
+                "pergunta=" + encodeURIComponent(pergunta) +
+                "&resposta=" + encodeURIComponent(resposta)
+            );
+            console.log("Enviei formulário");
+        }
+    </script>
+</head>
+
+<body>
+    <form action="" method="post" name="formDiscursiva" id="formDiscursiva">
+        <input type="text" name="pergunta" id="pergunta" placeholder="Pergunta:"><br>
+        <input type="text" name="resposta" id="resposta" placeholder="Resposta:"><br>
+        <input type="button" value="Enviar" onclick="IncluirDiscursiva()">
+    </form>
+    <h3 id="resultado">Resultado:</h3>
+    <a href="ListarQuestoes.html">Voltar para Lista</a>
+</body>
+
+</html>

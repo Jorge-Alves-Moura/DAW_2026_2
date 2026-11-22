@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alterar Pergunta Múltipla Escolha</title>
+    <script>
+        function BuscarMultipla() {
+            let idPergunta = document.getElementById("buscaId").value;
+
+            let xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log("Resposta chegou ok: " + this.responseText);
+                    let dados = JSON.parse(this.responseText);
+                    if (dados.encontrada) {
+                        document.getElementById("idPergunta").value = dados.idPergunta;
+                        document.getElementById("pergunta").value = dados.pergunta;
+                        document.getElementById("quantidade").value = dados.respostas.length;
+
+                        let divCampos = document.getElementById("camposRespostas");
+                        divCampos.innerHTML = "";
+
+                        for (let i = 0; i < dados.respostas.length; i++) {
+                            let sel0 = dados.gabaritos[i] == "0" ? "selected" : "";
+                            let sel1 = dados.gabaritos[i] == "1" ? "selected" : "";
+
+                            divCampos.innerHTML +=
+                                '<input type="text" name="resposta[]" value="' + dados.respostas[i] + '"> ' +
+                                '<select name="gabarito[]">' +
+                                '<option value="0" ' + sel0 + '>0</option>' +
+                                '<option value="1" ' + sel1 + '>1</option>' +
+                                '</select><br>';
+                        }
+
+                        document.getElementById("formAlterar").style.display = "block";
+                        document.getElementById("resultado").innerHTML = "Resultado:";
+                    } else {
+                        document.getElementById("formAlterar").style.display = "none";
+                        document.getElementById("resultado").innerHTML = "Resultado: Pergunta não encontrada.";
+                    }
+                } else if (this.readyState < 4) {
+                    console.log("Carregando: " + this.readyState);
+                } else {
+                    console.log("Requisição falhou: " + this.status);
+                }
+            };
+
+            xmlhttp.open(
+                "GET",
+                "AlterarQuestao-MultiplaEscolha.php?idPergunta=" + encodeURIComponent(idPergunta),
+                true
+            );
+            xmlhttp.send();
+        }
+
+        function AlterarMultipla() {
+            let idPergunta = document.getElementById("idPergunta").value;
+            let pergunta = document.getElementById("pergunta").value;
+            let quantidade = document.getElementById("quantidade").value;
+            let inputsResposta = document.getElementsByName("resposta[]");
+            let selectsGabarito = document.getElementsByName("gabarito[]");
+
+            let parametros = "idPergunta=" + encodeURIComponent(idPergunta) +
+                "&pergunta=" + encodeURIComponent(pergunta) +
+                "&quantidade=" + encodeURIComponent(quantidade);
+
+            for (let i = 0; i < inputsResposta.length; i++) {
+                parametros += "&resposta[]=" + encodeURIComponent(inputsResposta[i].value);
+                parametros += "&gabarito[]=" + encodeURIComponent(selectsGabarito[i].value);
+            }
+
+            let xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log("Resposta chegou ok: " + this.responseText);
+                    document.getElementById("resultado").innerHTML =
+                        "Resultado: " + this.responseText;
+                } else if (this.readyState < 4) {
+                    console.log("Carregando: " + this.readyState);
+                } else {
+                    console.log("Requisição falhou: " + this.status);
+                }
+            };
+
+            xmlhttp.open("POST", "AlterarQuestao-MultiplaEscolha.php", true);
+            xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xmlhttp.send(parametros);
+            console.log("Enviei alteração");
+        }
+
+        function VerificarParametroUrl() {
+            let params = new URLSearchParams(window.location.search);
+            if (params.has("idPergunta")) {
+                document.getElementById("buscaId").value = params.get("idPergunta");
+                BuscarMultipla();
+            }
+        }
+    </script>
+</head>
+
+<body onload="VerificarParametroUrl()">
+    <form action="" method="get" id="formBuscar">
+        <input type="number" name="idPergunta" id="buscaId" placeholder="ID da pergunta">
+        <input type="button" value="Buscar" onclick="BuscarMultipla()">
+    </form>
+
+    <form action="" method="post" id="formAlterar" style="display: none; margin-top: 15px;">
+        <input type="hidden" name="idPergunta" id="idPergunta">
+        <input type="hidden" name="quantidade" id="quantidade">
+        <input type="text" name="pergunta" id="pergunta"><br><br>
+        <div id="camposRespostas"></div><br>
+        <input type="button" value="Alterar" onclick="AlterarMultipla()">
+    </form>
+
+    <h3 id="resultado">Resultado:</h3>
+    <a href="ListarQuestoes.html">Voltar para Lista</a>
+</body>
+
+</html>

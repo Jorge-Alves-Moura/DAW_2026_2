@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incluir Questão Múltipla Escolha</title>
+    <script>
+        function GerarCampos() {
+            let quantidade = document.getElementById("quantidade").value;
+            let divCampos = document.getElementById("camposRespostas");
+            divCampos.innerHTML = "";
+
+            for (let i = 0; i < quantidade; i++) {
+                divCampos.innerHTML +=
+                    '<input type="text" name="resposta[]" placeholder="Resposta ' + (i + 1) + ':"> ' +
+                    '<select name="gabarito[]">' +
+                    '<option value="0">0</option>' +
+                    '<option value="1">1</option>' +
+                    '</select><br>';
+            }
+        }
+
+        function IncluirMultipla() {
+            let pergunta = document.getElementById("pergunta").value;
+            let quantidade = document.getElementById("quantidade").value;
+            let inputsResposta = document.getElementsByName("resposta[]");
+            let selectsGabarito = document.getElementsByName("gabarito[]");
+
+            if (inputsResposta.length == 0 || inputsResposta.length != quantidade) {
+                document.getElementById("resultado").innerHTML =
+                    "Resultado: Clique em 'Gerar Alternativas' antes de enviar.";
+                return;
+            }
+
+            document.getElementById("resultado").innerHTML = "Enviando...";
+
+            let parametros = "pergunta=" + encodeURIComponent(pergunta) +
+                "&quantidade=" + encodeURIComponent(quantidade);
+
+            for (let i = 0; i < inputsResposta.length; i++) {
+                parametros += "&resposta[]=" + encodeURIComponent(inputsResposta[i].value);
+                parametros += "&gabarito[]=" + encodeURIComponent(selectsGabarito[i].value);
+            }
+
+            let xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log("Resposta chegou ok: " + this.responseText);
+                    document.getElementById("resultado").innerHTML =
+                        "Resultado: " + this.responseText;
+                    document.getElementById("formMultipla").reset();
+                    document.getElementById("camposRespostas").innerHTML = "";
+                } else if (this.readyState < 4) {
+                    console.log("Carregando: " + this.readyState);
+                } else {
+                    console.log("Requisição falhou: " + this.status);
+                }
+            };
+
+            xmlhttp.open("POST", "IncluirQuestao-MultiplaEscolha.php", true);
+            xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xmlhttp.send(parametros);
+            console.log("Enviei formulário");
+        }
+    </script>
+</head>
+
+<body>
+    <form action="" method="post" name="formMultipla" id="formMultipla">
+        <input type="text" name="pergunta" id="pergunta" placeholder="Pergunta:"><br>
+        <input type="number" name="quantidade" id="quantidade" min="1" placeholder="Quantidade de respostas:">
+        <input type="button" value="Gerar Alternativas" onclick="GerarCampos()"><br><br>
+        <div id="camposRespostas"></div><br>
+        <input type="button" value="Enviar" onclick="IncluirMultipla()">
+    </form>
+    <h3 id="resultado">Resultado:</h3>
+    <a href="ListarQuestoes.html">Voltar para Lista</a>
+</body>
+
+</html>
